@@ -1,0 +1,684 @@
+#: import FadeTransition kivy.uix.screenmanager.FadeTransition
+#: import Factory kivy.factory.Factory
+#: import Attendance attendance
+#: import FileManager filemanager
+#: import User users
+#: import webbrowser webbrowser
+
+
+WindowManager:
+    LoginSignUpWindow:
+    SignUpWindow:
+    MainMenu:
+    AttendanceWindow:
+    ViewRecordsWindow:
+    NewRecordWindow:
+    UpdateRecordWindow:
+    TakeAttendanceWindow:
+
+
+<ViewRecordResults>:
+    auto_dismiss: False
+    title: "View Records"
+    FloatLayout:
+        Button:
+            text: "Close"
+            pos_hint:{"x":0.45, "y":0.05}
+
+            on_press:
+                root.dismiss()
+
+
+<Button>:
+    color: .02, .37, .99, 1
+    background_color: 0, 0, 0, 0
+    font_size: "25sp"
+    font_name: "Antipasto"
+    bold: True
+    size_hint: 0.5, 0.055
+    canvas.before:
+        Color:
+            rgba: .02, .37, .99, 1
+        Line:
+            width: 1
+            rectangle: self.x, self.y, self.width, self.height
+
+    on_press:
+        self.background_color= 0.95, 0.95, 0.99, 1
+
+    on_release:
+        self.background_color= 0, 0, 0, 0
+
+
+<TextInputNoTabEnter@TextInput>:
+    write_tab: False
+    multiline: False
+
+    color: 0, 0, 0, .5
+    cursor_color: 0, 0, 0, 1
+
+    halign: "center"
+
+    font_name: "Antiqua"
+    font_size: "15sp"
+
+
+<AppScreen>:
+    canvas:
+        Color:
+            rgba: 1, 1, 1, 1
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+
+<SecondaryScreens@AppScreen>:
+    FloatLayout:
+        Button:
+            size_hint: 0.2, 0.055
+            text: "Main Menu"
+            pos_hint:{"x":0.75, "y":0.05}
+
+            on_press:
+                app.root.transition = FadeTransition(duration=0.2)
+                app.root.current = "main"
+
+
+<Title@Label>:
+    font_size: "36sp"
+    font_name: "Antipasto"
+    pos_hint: {"y": 0.35}
+    color: .02, .37, .99, 1
+
+
+<Description@Label>:
+    font_name: "Antipasto"
+    font_size: "18sp"
+    halign: "center"
+    color: 0,0,0,1
+
+
+<ErrorMsg@Label>:
+    font_name: "Antipasto"
+    font_size: "18sp"
+    halign: "center"
+    color: 1,0,0,1
+    text: ""
+
+
+<LoginSignUpWindow@AppScreen>:
+    name: "login_signup"
+
+    on_enter:
+        username.text = ''
+        password.text = ''
+        error_msg.text = ''
+
+    FloatLayout:
+        color: 1, 0, 0, 1
+
+        Title:
+            text: "Attendance Management Application"
+
+        ErrorMsg:
+            id:error_msg
+            pos_hint: {"y": 0.25}
+
+        Description:
+            text: "Username:"
+            id: username_desc
+            pos_hint: {"y":0.18}
+
+        TextInputNoTabEnter:
+            id: username
+            size_hint: 0.35, 0.055
+            pos_hint:{"x": 0.325, "y":0.6}
+
+        Description:
+            text: "Password:"
+
+            pos_hint: {"y":0.03}
+
+        TextInputNoTabEnter:
+            id: password
+            color: 0, 0, 0, .5
+
+            cursor_color: 0, 0, 0, 1
+
+            halign: "center"
+            font_name: "Antiqua"
+            password: True
+            font_size: "15sp"
+            multiline: False
+            size_hint: 0.35, 0.055
+            pos_hint:{"x": 0.325, "y":0.45}
+
+
+        Button:
+            text: "Login"
+            pos_hint:{"x":0.25, "y":0.35}
+
+            on_press:
+                if User.User.auth_user(username.text, password.text) == "Authorized": \
+                app.root.current = "main"; \
+                User.User.set_current_user(username.text, password.text)
+                else: error_msg.text = User.User.auth_user(username.text, password.text)
+
+        Description:
+            text: "or"
+
+            font_size: "25sp"
+
+            pos_hint: {"top":0.78}
+
+        Button:
+            text: "Sign Up"
+            pos_hint:{"x":0.35, "y":0.15}
+            size_hint: 0.3, 0.055
+
+            on_press:
+                app.root.transition = FadeTransition(duration=0.2)
+                app.root.current = "signup"
+
+<SignUpWindow@AppScreen>:
+    name: "signup"
+
+    on_enter:
+        error_msg.text = ''
+        username.text = ''
+        password.text = ''
+        confirm_password.text = ''
+
+    FloatLayout:
+        color: 1, 0, 0, 1
+
+        Title:
+            text: "Attendance Management Application"
+
+        ErrorMsg:
+            id:error_msg
+            pos_hint: {"y": 0.25}
+
+        Description:
+            text: "Username:"
+            id: user_name_desc
+
+            pos_hint: {"y":0.18}
+
+        TextInputNoTabEnter:
+            id: username
+            color: 0, 0, 0, .5
+
+            cursor_color: 0, 0, 0, 1
+
+            halign: "center"
+            font_name: "Antiqua"
+
+            font_size: "15sp"
+            multiline: False
+            size_hint: 0.35, 0.055
+            pos_hint:{"x": 0.325, "y":0.6}
+
+        Description:
+            text: "Password:"
+
+            pos_hint: {"y":0.03}
+
+        TextInputNoTabEnter:
+            id: password
+            color: 0, 0, 0, .5
+
+            cursor_color: 0, 0, 0, 1
+
+            halign: "center"
+            font_name: "Antiqua"
+            password: True
+            font_size: "15sp"
+            multiline: False
+            size_hint: 0.35, 0.055
+            pos_hint:{"x": 0.325, "y":0.45}
+
+        Description:
+            text: "Confirm Password:"
+
+            pos_hint: {"top": 0.88}
+
+        TextInputNoTabEnter:
+            id: confirm_password
+            color: 0, 0, 0, .5
+
+            cursor_color: 0, 0, 0, 1
+
+            halign: "center"
+            font_name: "Antiqua"
+            password: True
+            font_size: "15sp"
+            multiline: False
+            size_hint: 0.35, 0.055
+            pos_hint:{"x": 0.325, "y":0.30}
+
+        Button:
+            text: "Sign Up"
+            pos_hint:{"x":0.35, "y":0.15}
+            size_hint: 0.3, 0.055
+
+            on_press:
+                error_msg.text = User.User.init_new_user(username.text, password.text, confirm_password.text)
+                if error_msg.text == "Successful!": \
+                error_msg.color = 0, 1, 0, 1; \
+                username.text = ''; \
+                password.text = ''; \
+                confirm_password.text = ''
+                else: error_msg.color = 1, 0, 0, 1
+
+        Button:
+            size_hint: 0.2, 0.055
+            text: "Login"
+            pos_hint:{"x":0.75, "y":0.05}
+
+            on_press:
+                app.root.transition = FadeTransition(duration=0.2)
+                app.root.current = "login_signup"
+
+
+<MainMenu@AppScreen>:
+    name: "main"
+
+    FloatLayout:
+        color: 1, 0, 0, 1
+
+        Title:
+            text: "Attendance Management Application"
+
+        Button:
+            text: "New Record"
+            pos_hint:{"x":0.25, "y":0.65}
+
+            on_press:
+                app.root.transition = FadeTransition(duration=0.2)
+                app.root.current = "new_record"
+
+        Button:
+            text: "Take Attendance"
+            pos_hint:{"x":0.25, "y":0.55}
+
+            on_press:
+                app.root.transition = FadeTransition(duration=0.2)
+                app.root.current = "take_attendance"
+
+        Button:
+            text: "Update Records"
+            pos_hint:{"x":0.25, "y":0.45}
+
+            on_press:
+                app.root.transition = FadeTransition(duration=0.2)
+                app.root.current = "update_records"
+
+        Button:
+            text: "View Records"
+            id: test
+            pos_hint:{"x":0.25, "y":0.35}
+
+            on_press:
+                app.root.transition = FadeTransition(duration=0.2)
+                app.root.current = "view_records"
+
+        Button:
+            text: "Help"
+            pos_hint:{"x":0.25, "y":0.25}
+
+            on_press:
+                webbrowser.open('help.html', new=1)
+
+        Button:
+            size_hint: 0.2, 0.055
+            text: "Logout"
+            pos_hint:{"x":0.75, "y":0.05}
+            on_press:
+                app.root.transition = FadeTransition(duration=0.2)
+                app.root.current = "login_signup"
+                User.User.user_logout()
+
+
+<NewRecordWindow@SecondaryScreens>:
+    name: "new_record"
+
+    on_enter:
+        error_msg.text = ''
+        name_of_record.text = ''
+        name_of_students.text = ''
+
+    Title:
+        text: "New Record"
+
+    ErrorMsg:
+        id:error_msg
+        pos_hint: {"y": 0.25}
+
+    Description:
+        text: "Name of Students Separated by Comma"
+        pos_hint: {"y": 0.15}
+
+    TextInputNoTabEnter:
+        id: name_of_students
+        color: 0, 0, 0, 1
+
+        cursor_color: 0, 0, 0, 1
+
+
+        halign: "left"
+        font_name: "Antiqua"
+
+        hint_text: "Ram Krishna, Hari Bahadur, Sita Maya"
+
+        font_size: "15sp"
+        multiline: True
+        size_hint: 0.45, 0.2
+        pos_hint:{"x":0.275, "y":0.42}
+
+    Description:
+        text: "Name of the Record:"
+        pos_hint: {"top": 0.88}
+
+
+    TextInputNoTabEnter:
+        id: name_of_record
+        color: 0, 0, 0, .5
+
+        cursor_color: 0, 0, 0, 1
+
+        halign: "center"
+        font_name: "Antiqua"
+
+        font_size: "15sp"
+        hint_text: "AttendanceRecords"
+        multiline: False
+        size_hint: 0.35, 0.055
+        pos_hint:{"x": 0.325, "y":0.3}
+
+    Button:
+        text: "Save"
+
+        size_hint: 0.25, 0.055
+        pos_hint:{"x":0.375, "y":0.15}
+
+        on_press:
+            error_msg.text = Attendance.Attendance.take_new(name_of_record.text, name_of_students.text)
+            if error_msg.text == "Successful!": \
+            error_msg.color = 0, 1, 0, 1; \
+            name_of_record.text = ''; \
+            name_of_students.text = ''
+            else: error_msg.color = 1, 0, 0, 1
+
+
+<TakeAttendanceWindow@SecondaryScreens>:
+    name: "take_attendance"
+
+    on_enter:
+        error_msg.text = ''
+        browse.chat_file = ''
+        name_of_record.text = ''
+
+    Title:
+        text: "Take Attendance"
+
+    ErrorMsg:
+        id:error_msg
+        pos_hint: {"y": 0.25}
+
+    Description:
+        text: "Upload the chat file.\nGenerally, it is located in\n'Zoom' folder in 'Documents'"
+        pos_hint: {"y": 0.2}
+
+    Button:
+        id: browse
+        chat_file: ""
+
+        size_hint: 0.2, 0.055
+        text: "Browse"
+        pos_hint:{"x": 0.4, "y":0.55}
+
+        on_press:
+            browse.chat_file = FileManager.FileManager.open_file()
+
+    Description:
+        text: "Name of the Record You Want to Update:"
+        pos_hint: {"top": 0.98}
+
+    TextInputNoTabEnter:
+        id: name_of_record
+        color: 0, 0, 0, .5
+
+        cursor_color: 0, 0, 0, 1
+
+        halign: "center"
+        font_name: "Antiqua"
+
+        font_size: "15sp"
+        hint_text: "AttendanceRecords"
+        multiline: False
+        size_hint: 0.35, 0.055
+        pos_hint:{"x": 0.325, "y":0.4}
+
+    Button:
+        size_hint: 0.35, 0.055
+        text: "Take Attendance"
+        pos_hint:{"x":0.325, "y":0.25}
+
+        on_press:
+            error_msg.text = Attendance.Attendance.update(name_of_record.text, browse.chat_file)
+            if error_msg.text == "Successful!": error_msg.color = 0, 1, 0, 1
+            else: error_msg.color = 1, 0, 0, 1
+            name_of_record.text = ''
+
+    Description:
+        text: "Note: You can view the record by going to the \n Main Menu and clicking View Records."
+        pos_hint: {"top": 0.7}
+
+
+<UpdateRecordWindow@SecondaryScreens>:
+    name: "update_records"
+
+    on_enter:
+        error_msg.text = ''
+        name_of_record.text = ''
+        name_of_students.text = ''
+    
+    Title:
+        text: "Update Records"
+
+    ErrorMsg:
+        id:error_msg
+        pos_hint: {"y": 0.25}
+
+    Description:
+        text: "Name of Students Separated by Comma"
+        pos_hint: {"y": 0.15}
+
+    TextInputNoTabEnter:
+        id: name_of_students
+        color: 0, 0, 0, 1
+
+        cursor_color: 0, 0, 0, 1
+
+
+        halign: "left"
+        font_name: "Antiqua"
+
+        hint_text: "Ram Krishna, Hari Bahadur, Sita Maya"
+
+        font_size: "15sp"
+        multiline: True
+        size_hint: 0.45, 0.2
+        pos_hint:{"x":0.275, "y":0.42}
+
+    Description:
+        text: "Name of the Record to Update:"
+        pos_hint: {"top": 0.88}
+
+
+    TextInputNoTabEnter:
+        id: name_of_record
+        color: 0, 0, 0, .5
+
+        cursor_color: 0, 0, 0, 1
+
+        halign: "center"
+        font_name: "Antiqua"
+
+        font_size: "15sp"
+        hint_text: "AttendanceRecords"
+        multiline: False
+        size_hint: 0.35, 0.055
+        pos_hint:{"x": 0.325, "y":0.3}
+
+    Button:
+        text: "Add Students"
+
+        size_hint: 0.25, 0.055
+        pos_hint:{"x":0.175, "y":0.15}
+
+        on_press:
+            error_msg.text = Attendance.Attendance.add_students(name_of_record.text, name_of_students.text)
+            if error_msg.text == "Successful!": \
+            error_msg.color = 0, 1, 0, 1; \
+            name_of_record.text = ''; \
+            name_of_students.text = ''
+            else: error_msg.color = 1, 0, 0, 1
+
+
+    Button:
+        text: "Remove Students"
+
+        size_hint: 0.35, 0.055
+        pos_hint:{"x":0.575, "y":0.15}
+
+        on_press:
+            error_msg.text = Attendance.Attendance.remove_students(name_of_record.text, name_of_students.text)
+            if error_msg.text == "Successful!": \
+            error_msg.color = 0, 1, 0, 1; \
+            name_of_record.text = ''; \
+            name_of_students.text = ''
+            else: error_msg.color = 1, 0, 0, 1
+
+
+<ViewRecordsWindow@SecondaryScreens>:
+    name: "view_records"
+
+    Title:
+        text: "View Records"
+
+    ErrorMsg:
+        id: error_msg
+        pos_hint: {"y": 0.35}
+
+    Description:
+        text: "Name of the Record you want to search for:"
+        pos_hint: {"y": 0.25}
+
+    TextInputNoTabEnter:
+        id: name_of_record
+        color: 0, 0, 0, .5
+
+        cursor_color: 0, 0, 0, 1
+
+        halign: "center"
+        font_name: "Antiqua"
+
+        font_size: "15sp"
+        hint_text: "AttendanceRecords"
+        multiline: False
+        size_hint: 0.35, 0.055
+        pos_hint:{"x": 0.325, "y":0.65}
+
+    Button:
+        text: "Search"
+
+        size_hint: 0.25, 0.055
+        pos_hint:{"x":0.375, "y":0.55}
+
+        on_release:
+            FileManager.FileManager.save_recent_searches(name_of_record.text)
+            path = f"users/{User.User.current_user}"
+            records = FileManager.FileManager.find_file(name_of_record.text, path=path)
+            popup = Factory.ViewRecordResults()
+            popup.show_records(records)
+            popup.open()
+            name_of_record.text = ''
+
+    Description:
+        text: "Recent Searches:"
+        pos_hint: {"top": 0.98}
+
+    Button:
+        id: search_1
+        text: ""
+        font_name: "Antiqua"
+        path: ''
+
+        size_hint: 0.35, 0.055
+        opacity: 0
+        disabled: True
+        pos_hint:{"x":0.325, "y":0.35}
+
+        on_release:
+            path = f"users/{User.User.current_user}"
+            records = FileManager.FileManager.find_file(search_1.text, path=path)
+            popup = Factory.ViewRecordResults()
+            popup.show_records(records)
+            popup.open()
+
+    Button:
+        text: ""
+        id: search_2
+
+        path: ''
+
+        font_name: "Antiqua"
+
+        size_hint: 0.35, 0.055
+        opacity: 0
+        disabled: True
+        pos_hint:{"x":0.325, "y":0.25}
+
+        on_release:
+            path = f"users/{User.User.current_user}"
+            records = FileManager.FileManager.find_file(search_2.text, path=path)
+            popup = Factory.ViewRecordResults()
+            popup.show_records(records)
+            popup.open()
+
+
+    Button:
+        text: ""
+        id: search_3
+
+        path: ''
+
+        font_name: "Antiqua"
+
+        size_hint: 0.35, 0.055
+        opacity: 0
+        disabled: True
+        pos_hint:{"x":0.325, "y":0.15}
+
+        on_release:
+            path = f"users/{User.User.current_user}"
+            records = FileManager.FileManager.find_file(search_3.text, path=path)
+            popup = Factory.ViewRecordResults()
+            popup.show_records(records)
+            popup.open()
+
+    Button:
+        text: "All Records"
+
+        size_hint: 0.35, 0.055
+        pos_hint:{"x":0.05, "y":0.05}
+
+        on_release:
+            path = f"users/{User.User.current_user}"
+            records = FileManager.FileManager.find_file('', path=path)
+            popup = Factory.ViewRecordResults()
+            popup.show_records(records)
+            popup.open()
+
